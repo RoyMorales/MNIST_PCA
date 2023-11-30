@@ -1,0 +1,2 @@
+# MNIST_PCA
+MNIST using PCA
