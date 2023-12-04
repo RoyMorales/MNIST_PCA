@@ -28,18 +28,22 @@ def read_dataset_labels_train(num_labels):
 
 def average_number(data_image, data_labels):
     # Elements in data
-    size_data_elements = data_image.shape[0]
+    size_data_elements = [0 for i in range(10)]
 
     # Alocation array of 9 matrix 
     sum_array = np.zeros((10, 28, 28))
-
+    mean_array = np.zeros((10, 28, 28))
+    
     for index, image in enumerate(data_image):
         label_number = np.asarray(data_labels[index])
         sum_array[label_number] += image
+        size_data_elements[label_number] += 1
 
-    for matrix in sum_array:
-        mean_array = sum_array / size_data_elements
-    
+    print("Number Counter: ", size_data_elements)
+
+    for number in range(len(sum_array)):
+        mean_array[number] = sum_array[number] / size_data_elements[number]
+        
     return mean_array
 
 
@@ -74,7 +78,7 @@ if __name__ == "__main__":
     plt.show()
 
     # Mean Image - all digits
-    plt.imshow(data_mean_image, cmap = "gray")
+    plt.imshow(data_mean_image)
     plt.show()
 
 
