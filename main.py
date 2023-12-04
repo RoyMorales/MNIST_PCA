@@ -5,6 +5,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import gzip
+from pprint import pprint
 
 def read_dataset_images_train(num_images):
     image_dataset_train = gzip.open("./Dataset/train-images-idx3-ubyte.gz")
@@ -46,6 +47,17 @@ def average_number(data_image, data_labels):
         
     return mean_array
 
+def mean_vector_row(matrix):
+    mean_vector = np.mean(matrix, axis=1)    
+    return mean_vector
+
+def scatter_matrix(matrix, mean_vector):
+    scatter_matrix = np.zeros((28, 28))
+
+    for i in range(matrix.shape[1]):
+        scatter_matrix += (matrix[:,i].reshape(28,1) - mean_vector).dot((matrix[:,i].reshape(28,1) - mean_vector).T)
+
+    return scatter_matrix
 
 def principal_component(image):
     print("ToDo!")
@@ -80,5 +92,14 @@ if __name__ == "__main__":
     # Mean Image - all digits
     plt.imshow(data_mean_image)
     plt.show()
+
+    # Mean Vetor of Matrix
+    mean_vector = mean_vector_row(data_mean_image)
+    print("Mean Vector: ", mean_vector.shape)
+
+    # Scatter Matrix
+    scatter_matrix = scatter_matrix(data_mean_image, mean_vector)
+    print("Scatter Matrix: ", scatter_matrix.shape)
+
 
 
