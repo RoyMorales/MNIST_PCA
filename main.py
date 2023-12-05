@@ -59,6 +59,7 @@ def scatter_matrix(matrix, mean_vector):
 
     return scatter_matrix
 
+
 def principal_component(image):
     print("ToDo!")
 
@@ -100,6 +101,39 @@ if __name__ == "__main__":
     # Scatter Matrix
     scatter_matrix = scatter_matrix(data_mean_image, mean_vector)
     print("Scatter Matrix: ", scatter_matrix.shape)
+
+    # Conv Matrix
+    cov_matrix = np.cov(data_mean_image)
+    print("Cov Matrix: ", cov_matrix.shape)
+
+    # Eigenvalues and Eigenvectors
+    eigenvalues_sc, eigenvectors_sc = np.linalg.eig(scatter_matrix)
+    eigenvalues_cov, eigenvectors_cov = np.linalg.eig(cov_matrix)
+    print("Eigenvalues Scatter: ", eigenvalues_sc.shape)
+    print("Eigenvectors Scatter: ", eigenvectors_sc.shape)
+    print("Eigenvalues Cov: ", eigenvalues_cov.shape)
+    print("Eigenvectors Cov: ", eigenvectors_cov.shape)
+
+    # Sort Eigenvalues - Eigenvectors in descending order
+    sorted_ind_sc = np.argsort(eigenvalues_sc)
+    eigenvalues_sc = eigenvalues_sc[sorted_ind_sc]
+    eigenvectors_sc = eigenvectors_sc[sorted_ind_sc]
+
+    sorted_ind_cov = np.argsort(eigenvalues_cov)
+    eigenvalues_cov = eigenvalues_cov[sorted_ind_cov]
+    eigenvectors_cov = eigenvectors_cov[sorted_ind_cov]
+
+    print("Sorted Index SC: ", sorted_ind_sc)
+    print("Sorted Index Cov: ", sorted_ind_cov)
+
+    # MISSING Eigenvalues Weight
+
+    number_eignvectors = 2
+    top_eignvectors = eigenvectors_cov[:, 0:number_eignvectors]
+    print("Top Eignvectors: ", top_eignvectors.shape)
+
+
+
 
 
 
