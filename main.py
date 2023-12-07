@@ -101,21 +101,57 @@ if __name__ == "__main__":
     dataset_size_test = 10000
 
     # Read Dataset
-    data_image_train = read_dataset_images_train(dataset_size)
-    data_labels_train = read_dataset_labels_train(dataset_size)
-    data_image_test = read_dataset_images_test(dataset_size_test)
-    data_labels_test = read_dataset_labels_test(dataset_size_test)
+    dataset_images_train = read_dataset_images_train(dataset_size)
+    dataset_labels_train = read_dataset_labels_train(dataset_size)
+    dataset_images_test = read_dataset_images_test(dataset_size_test)
+    dataset_labels_test = read_dataset_labels_test(dataset_size_test)
 
-    print("Train Dataset Images Shape: ", data_image_train.shape)
-    print("Train Dataset Labels Shape: ", data_labels_train.shape)
+    # Flatten Dataset
+    dataset_images_train_flat = dataset_images_train.reshape(
+        dataset_images_train.shape[0], -1
+    )
+    dataset_images_test_flat = dataset_images_test.reshape(
+        dataset_images_test.shape[0], -1
+    )
+
+    print("")
+    print("Dataset Train Images: ", dataset_images_train.shape)
+    print("Dataset Test Images: ", dataset_images_test.shape)
+    print("Dataset Train Labels: ", dataset_labels_train.shape)
+    print("Dataset Test Labels: ", dataset_labels_test.shape)
+    print("")
+    print("Dataset Train Images Flat: ", dataset_images_train_flat.shape)
+    print("Dataset Test Images Flat: ", dataset_images_test_flat.shape)
 
     # Mean of the images from the dataset - Train
-    data_mean_images = average_number(data_image_train, data_labels_train)
+    print("")
+    data_mean_images = average_number(dataset_images_train, dataset_labels_train)
     data_mean_image = np.mean(data_mean_images, axis=0)
+    data_mean_image_flat = data_mean_image.flatten()
+
+    print("Data Train Mean Images: ", data_mean_images.shape)
+    print("Data Train Mean Image: ", data_mean_image.shape)
+    print("Data Train Mean Image flat: ", data_mean_image_flat.shape)
 
     # Mean of the images from the dataset - Test
-    data_mean_images_test = average_number(data_image_test, data_labels_test)
+    print("")
+    data_mean_images_test = average_number(dataset_images_test, dataset_labels_test)
     data_mean_image_test = np.mean(data_mean_images_test, axis=0)
+    data_mean_image_test_flat = data_mean_image_test.flatten()
+
+    print("Data Test Mean Images: ", data_mean_images_test.shape)
+    print("Data Test Mean Image: ", data_mean_image_test.shape)
+    print("Data Test Mean Image Flat: ", data_mean_image_test_flat.shape)
+
+    # Center and normalize images
+    data_images_center_train = (dataset_images_train_flat - data_mean_image_flat) / 255
+    data_images_center_test = (
+        dataset_images_test_flat - data_mean_image_test_flat
+    ) / 255
+
+    print("")
+    print("Data Train Center Image: ", data_images_center_train.shape)
+    print("Data Test Center Image: ", data_images_center_test.shape)
 
     # Mean Image of every single digit
     num_col = 5
@@ -134,62 +170,67 @@ if __name__ == "__main__":
     plt.show()
 
     # Mean Vetor of Matrix
-    mean_vector = mean_vector_row(data_mean_image)
-    print("Mean Vector: ", mean_vector.shape)
+    # mean_vector = mean_vector_row(data_mean_image)
+    # print("")
+    # print("Mean Vector: ", mean_vector.shape)
 
     # Scatter Matrix
-    scatter_matrix = scatter_matrix(data_mean_image, mean_vector)
-    print("Scatter Matrix: ", scatter_matrix.shape)
+    # scatter_matrix = scatter_matrix(data_mean_image, mean_vector)
+    # print("Scatter Matrix: ", scatter_matrix.shape)
 
     # Conv Matrix
-    cov_matrix = np.cov(data_mean_image)
+    cov_matrix = np.cov(data_images_center_train, rowvar=False)
     print("Cov Matrix: ", cov_matrix.shape)
 
     # Eigenvalues and Eigenvectors
-    eigenvalues_sc, eigenvectors_sc = np.linalg.eig(scatter_matrix)
+    # eigenvalues_sc, eigenvectors_sc = np.linalg.eig(scatter_matrix)
     eigenvalues_cov, eigenvectors_cov = np.linalg.eig(cov_matrix)
-    print("Eigenvalues Scatter: ", eigenvalues_sc.shape)
-    print("Eigenvectors Scatter: ", eigenvectors_sc.shape)
+
+    print("")
+    # print("Eigenvalues Scatter: ", eigenvalues_sc.shape)
+    # print("Eigenvectors Scatter: ", eigenvectors_sc.shape)
     print("Eigenvalues Cov: ", eigenvalues_cov.shape)
     print("Eigenvectors Cov: ", eigenvectors_cov.shape)
 
     # Sort Eigenvalues - Eigenvectors in descending order
-    sorted_ind_sc = np.argsort(eigenvalues_sc)
-    eigenvalues_sc = eigenvalues_sc[sorted_ind_sc]
-    eigenvectors_sc = eigenvectors_sc[sorted_ind_sc]
+    # sorted_ind_sc = np.argsort(eigenvalues_sc)
+    # eigenvalues_sc = eigenvalues_sc[sorted_ind_sc]
+    # eigenvectors_sc = eigenvectors_sc[sorted_ind_sc]
 
-    sorted_ind_cov = np.argsort(eigenvalues_cov)
+    sorted_ind_cov = np.argsort(eigenvalues_cov)[::-1]
     eigenvalues_cov = eigenvalues_cov[sorted_ind_cov]
-    eigenvectors_cov = eigenvectors_cov[sorted_ind_cov]
+    eigenvectors_cov = eigenvectors_cov[:, sorted_ind_cov]
 
-    print("Sorted Index SC: ", sorted_ind_sc)
-    print("Sorted Index Cov: ", sorted_ind_cov)
+    # print("Sorted Index SC: ", sorted_ind_sc)
+    # print("Sorted Index Cov: ", sorted_ind_cov)
 
     # MISSING Eigenvalues Weight
 
-    number_eignvectors = 2
-    top_eignvectors = eigenvectors_cov[:, 0:number_eignvectors]
+    number_eignvectors = 8
+    top_eignvectors = eigenvectors_cov[:, :number_eignvectors]
+    print("")
     print("Top Eignvectors: ", top_eignvectors.shape)
 
     # Project the dataset onto the Eigenvectors
-    dataset_proj_train = np.dot(data_mean_image, top_eignvectors)
-    dataset_proj_test = np.dot(data_mean_image_test, top_eignvectors)
+    # Não sei porque esta a tipar para complexo 0j.
+    dataset_proj_train = (np.dot(data_images_center_train, top_eignvectors)).astype(
+        "float32"
+    )
+    dataset_proj_test = (np.dot(data_images_center_test, top_eignvectors)).astype(
+        "float32"
+    )
+    print("")
     print("Dataset Proj Train: ", dataset_proj_train.shape)
     print("Dataset Proj Test: ", dataset_proj_test.shape)
 
-    print("Data Test Label: ", data_labels_test.shape)
-    print("Data Train Label: ", data_labels_train.shape)
     # ToDo! -> Classifier
-    knc = KNeighborsClassifier(n_neighbors=3)
-    knc.fit(dataset_proj_train, data_labels_train)
+    knc = KNeighborsClassifier(n_neighbors=10)
+    knc.fit(dataset_proj_train, dataset_labels_train)
 
     # Prediction
     test_prediction = knc.predict(dataset_proj_test)
     print("Test Prediction: ", test_prediction)
 
     # Accuracy
-    accuracy = accuracy_score(data_labels_test, test_prediction)
+    accuracy = accuracy_score(dataset_labels_test, test_prediction)
     print("Accuracy: ", accuracy)
-
-
-
