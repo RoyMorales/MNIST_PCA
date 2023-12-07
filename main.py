@@ -184,6 +184,7 @@ if __name__ == "__main__":
 
     # Eigenvalues and Eigenvectors
     # eigenvalues_sc, eigenvectors_sc = np.linalg.eig(scatter_matrix)
+    # Tipa para complexo 0j. -> Não sei 
     eigenvalues_cov, eigenvectors_cov = np.linalg.eig(cov_matrix)
 
     print("")
