@@ -1,6 +1,7 @@
 # MNIST_PCA
 MNIST using PCA
 
--> Falta pesos dos vetores proprios
--> Tipo complexo nos vetores proprios | Não sei
--> Implementar Scatter Matrix
+-Tipo complexo nos vetores proprios | Não sei
+-Gravar Modelo
+-Ler Modelo
+-Separar Ficheiros
