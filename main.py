@@ -72,8 +72,8 @@ if __name__ == "__main__":
     print("Data Test Center Image: ", data_images_center_test.shape)
     
     # Scatter Matrix
-    scatter_matrix = scatter_matrix(data_images_center_train)
-    print("Scatter Matrix: ", scatter_matrix.shape)
+    #scatter_matrix = scatter_matrix(data_images_center_train)
+    #print("Scatter Matrix: ", scatter_matrix.shape)
 
     # Conv Matrix
     cov_matrix = np.cov(data_images_center_train, rowvar=False)
@@ -81,25 +81,27 @@ if __name__ == "__main__":
 
     # Eigenvalues and Eigenvectors
     # Não sei porque está a tipar para complexo 0j.
+    
     # Scatter Matrix
-    eigenvalues_sc, eigenvectors_sc = np.linalg.eig(scatter_matrix)
-    eigenvalues_sc = eigenvalues_sc.astype("float32")
-    eigenvectors_sc = eigenvectors_sc.astype("float32")
+    #eigenvalues_sc, eigenvectors_sc = np.linalg.eig(scatter_matrix)
+    #eigenvalues_sc = eigenvalues_sc.astype("float32")
+    #eigenvectors_sc = eigenvectors_sc.astype("float32")
+    
     # Covariance Matrix
     eigenvalues_cov, eigenvectors_cov = np.linalg.eig(cov_matrix)
     eigenvalues_cov = eigenvalues_cov.astype("float32")
     eigenvectors_cov = eigenvectors_cov.astype("float32")
 
     print("")
-    print("Eigenvalues Scatter: ", eigenvalues_sc.shape)
-    print("Eigenvectors Scatter: ", eigenvectors_sc.shape)
+    #print("Eigenvalues Scatter: ", eigenvalues_sc.shape)
+    #print("Eigenvectors Scatter: ", eigenvectors_sc.shape)
     print("Eigenvalues Cov: ", eigenvalues_cov.shape)
     print("Eigenvectors Cov: ", eigenvectors_cov.shape)
 
     # Sort Eigenvalues - Eigenvectors in descending order
-    sorted_ind_sc = np.argsort(eigenvalues_sc)[::-1]
-    eigenvalues_sc = eigenvalues_sc[sorted_ind_sc]
-    eigenvectors_sc = eigenvectors_sc[:, sorted_ind_sc]
+    #sorted_ind_sc = np.argsort(eigenvalues_sc)[::-1]
+    #eigenvalues_sc = eigenvalues_sc[sorted_ind_sc]
+    #eigenvectors_sc = eigenvectors_sc[:, sorted_ind_sc]
 
     sorted_ind_cov = np.argsort(eigenvalues_cov)[::-1]
     eigenvalues_cov = eigenvalues_cov[sorted_ind_cov]
@@ -156,12 +158,15 @@ if __name__ == "__main__":
     print("Accuracy: ", accuracy)
 
     # Save Model in Binary
-    knc_pickle = open("PCA_Model", "wb")
+    knc_pickle = open("pca_model", "wb")
     pickle.dump(knc, knc_pickle)
     knc_pickle.close()
 
+    # Save Top Vectors
+    np.savez("top_eigenvectors.npz", top_eigenvectors)
+
     # Images and Stuff
-    if False:
+    if True:
         # Mean Image of every single digit
         num_col = 5
         num_row = 2
