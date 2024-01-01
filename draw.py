@@ -19,22 +19,15 @@ class DrawDigit:
         self.window_size = (560, 560)
         self.screen_app = pygame.display.set_mode(self.window_size)
 
-        # Canvas Matrix
-        self.canvas_matrix = np.zeros(self.window_size)
-        self.canvas_mouse = np.zeros(self.window_size)
-
         # Draw Variables
         self.drawing = False
         self.draw_points = []
 
         # Model and Eigeinvectors
-        self.knc_model = joblib.load("./pca_model")
+        self.knc_model = joblib.load("./pca_model_eucl")
         self.top_eigenvectors = (np.load("./top_eigenvectors.npz"))["arr_0"]
         print(self.top_eigenvectors)
         print(self.top_eigenvectors.shape)
-        # FPS
-        self.fps_cap = 500
-        self.clock = pygame.time.Clock()
 
         # Font
         self.font = pygame.font.Font(None, 36)
@@ -43,9 +36,6 @@ class DrawDigit:
         while True:
             self.check_event()
             self.draw()
-
-            # print("FPS: ", int(self.clock.get_fps()))
-            # self.clock.tick()
 
     def check_event(self):
         event = pygame.event.poll()
@@ -77,7 +67,7 @@ class DrawDigit:
     def predict_entry(self):
         image_screen = pygame.surfarray.array2d(self.screen_app)
         image_matrix = np.swapaxes(image_screen, 0, 1)
-        downsize_image = zoom(image_matrix, 1 / 20, order=1)
+        downsize_image = zoom(image_matrix, 1 / 20, order=3)
         downsize_image_flat = (downsize_image.flatten()).reshape(1, -1)
         image_proj = np.dot(downsize_image_flat, self.top_eigenvectors)
         predicted_digit = self.knc_model.predict(image_proj)

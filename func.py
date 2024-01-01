@@ -77,3 +77,9 @@ def scatter_matrix(matrix):
 
     return scatter_matrix
 
+def euclidean_distance(point_a, point_b):
+    return np.linalg.norm(point_a - point_b)
+
+def mahalanobis_distance(point_a, point_b, inv_cov_matrix):
+    diff = point_a - point_b
+    return np.sqrt(np.dot(np.dot(diff.T, inv_cov_matrix), diff))

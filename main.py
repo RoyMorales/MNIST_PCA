@@ -118,7 +118,7 @@ if __name__ == "__main__":
     print("Sum Eigenvalues Cov: ", sum_eigenvalues_cov)
 
     # Eigenvectors Weight
-    info = 0.90
+    info = 0.70
     sum_info = 0
     number_eigenvectors = 0
     list_eigenvectors_weight = []
@@ -145,22 +145,43 @@ if __name__ == "__main__":
     print("Dataset Proj Train: ", dataset_proj_train.shape)
     print("Dataset Proj Test: ", dataset_proj_test.shape)
 
-    # ToDo! -> Classifier
-    knc = KNeighborsClassifier(n_neighbors=50)
-    knc.fit(dataset_proj_train, dataset_labels_train)
+    # KNeighborsClassifier -> Euclidian Distance
+    #knc_eucl = KNeighborsClassifier(n_neighbors=50, metric=euclidean_distance)
+    #knc_eucl.fit(dataset_proj_train, dataset_labels_train)
 
     # Prediction
-    test_prediction = knc.predict(dataset_proj_test)
-    print("Test Prediction: ", test_prediction)
+    #test_prediction_eucl = knc_eucl.predict(dataset_proj_test)
+    #print("Test Prediction Euclidian: ", test_prediction_eucl)
 
     # Accuracy
-    accuracy = accuracy_score(dataset_labels_test, test_prediction)
-    print("Accuracy: ", accuracy)
+    #accuracy_eucl = accuracy_score(dataset_labels_test, test_prediction_eucl)
+    #print("Accuracy Euclidian: ", accuracy_eucl)
 
     # Save Model in Binary
-    knc_pickle = open("pca_model", "wb")
-    pickle.dump(knc, knc_pickle)
-    knc_pickle.close()
+    #knc_eucl_pickle = open("pca_model_eucl", "wb")
+    #pickle.dump(knc_eucl, knc_eucl_pickle)
+    #knc_eucl_pickle.close()
+
+    # KNeighborsClassifier -> Mahalanobis Distance
+    #cov_matrix_pca = np.cov(dataset_proj_train, rowvar=False)
+    #inv_cov_matrix_pca = np.linalg.inv(cov_matrix_pca)
+    #print("PCA Cov Matrix: ", cov_matrix_pca.shape)
+
+    #knc_maha = KNeighborsClassifier(n_neighbors=50, metric=mahalanobis_distance, metric_params={"inv_cov_matrix": inv_cov_matrix_pca})
+    #knc_maha.fit(dataset_proj_train, dataset_labels_train)
+
+    # Prediction
+    #test_prediction_maha = knc_maha.predict(dataset_proj_test)
+    #print("Test Prediction Mahalanobis: ", test_prediction_maha)
+
+    # Accuracy
+    #accuracy_maha = accuracy_score(dataset_labels_test, test_prediction_maha)
+    #print("Accuracy Mahalanobis: ", accuracy_maha)
+
+    # Save Model in Binary
+    #knc_maha_pickle = open("pca_model_maha", "wb")
+    #pickle.dump(knc_maha, knc_maha_pickle)
+    #knc_maha_pickle.close()
 
     # Save Top Vectors
     np.savez("top_eigenvectors.npz", top_eigenvectors)
