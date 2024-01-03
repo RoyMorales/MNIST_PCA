@@ -118,19 +118,20 @@ if __name__ == "__main__":
     print("Sum Eigenvalues Cov: ", sum_eigenvalues_cov)
 
     # Eigenvectors Weight
-    info = 0.70
-    sum_info = 0
-    number_eigenvectors = 0
-    list_eigenvectors_weight = []
+    #info = 0.60
+    #sum_info = 0
+    #number_eigenvectors = 0
+    #list_eigenvectors_weight = []
 
-    for value in eigenvalues_cov:
-        info_vector = value / cov_trace
-        list_eigenvectors_weight.append(info_vector)
+    #for value in eigenvalues_cov:
+    #    info_vector = value / cov_trace
+    #    list_eigenvectors_weight.append(info_vector)
 
-        if sum_info < info:
-            sum_info += info_vector
-            number_eigenvectors += 1
-
+    #    if sum_info < info:
+    #        sum_info += info_vector
+    #        number_eigenvectors += 1
+    
+    number_eigenvectors = 16
     print("")
     print("Number of Eigenvectors: ", number_eigenvectors)
 
@@ -186,24 +187,4 @@ if __name__ == "__main__":
     # Save Top Vectors
     np.savez("top_eigenvectors.npz", top_eigenvectors)
 
-    # Images and Stuff
-    if True:
-        # Mean Image of every single digit
-        num_col = 5
-        num_row = 2
 
-        fig, axes = plt.subplots(num_row, num_col, figsize=(1.5 * num_col, 2 * num_row))
-        for index, image in enumerate(range(10)):
-            ax = axes[image // num_col, image % num_col]
-            ax.imshow(data_mean_images[image], cmap="gray")
-            ax.set_title("Label: {}".format(index))
-        plt.tight_layout()
-        plt.show()
-
-        # Mean Image - all digits
-        plt.imshow(data_mean_image)
-        plt.show()
-
-        # Plot Weight -> ~20 - 150
-        plt.plot([i for i in range(eigenvalues_cov.shape[0])], list_eigenvectors_weight)
-        plt.show()
