@@ -5,7 +5,6 @@ import pygame
 import sys
 import joblib
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy.ndimage import zoom
 from sklearn.neighbors import KNeighborsClassifier
 
@@ -26,11 +25,7 @@ class DrawDigit:
         # Model and Eigeinvectors
         self.knc_model = joblib.load("./pca_model_eucl")
         self.top_eigenvectors = (np.load("./top_eigenvectors.npz"))["arr_0"]
-        print(self.top_eigenvectors)
-        print(self.top_eigenvectors.shape)
-
-        # Font
-        self.font = pygame.font.Font(None, 36)
+        
 
     def run_app(self):
         while True:
@@ -65,11 +60,18 @@ class DrawDigit:
         pygame.display.flip()
 
     def predict_entry(self):
+        # Sceen to matrix and invert Y axis
         image_screen = pygame.surfarray.array2d(self.screen_app)
         image_matrix = np.swapaxes(image_screen, 0, 1)
+
+        # Lower Resolution and flatten matrix
         downsize_image = zoom(image_matrix, 1 / 20, order=3)
         downsize_image_flat = (downsize_image.flatten()).reshape(1, -1)
+
+        # Project image onto PCA Subspace
         image_proj = np.dot(downsize_image_flat, self.top_eigenvectors)
+
+        # Apply Model
         predicted_digit = self.knc_model.predict(image_proj)
         print(predicted_digit)
 

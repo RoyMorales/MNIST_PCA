@@ -71,44 +71,24 @@ if __name__ == "__main__":
     print("Data Train Center Image: ", data_images_center_train.shape)
     print("Data Test Center Image: ", data_images_center_test.shape)
     
-    # Scatter Matrix
-    #scatter_matrix = scatter_matrix(data_images_center_train)
-    #print("Scatter Matrix: ", scatter_matrix.shape)
-
-    # Conv Matrix
+    # Covariance Matrix
     cov_matrix = np.cov(data_images_center_train, rowvar=False)
     print("Cov Matrix: ", cov_matrix.shape)
-
+    
     # Eigenvalues and Eigenvectors
     # Não sei porque está a tipar para complexo 0j.
-    
-    # Scatter Matrix
-    #eigenvalues_sc, eigenvectors_sc = np.linalg.eig(scatter_matrix)
-    #eigenvalues_sc = eigenvalues_sc.astype("float32")
-    #eigenvectors_sc = eigenvectors_sc.astype("float32")
-    
-    # Covariance Matrix
     eigenvalues_cov, eigenvectors_cov = np.linalg.eig(cov_matrix)
     eigenvalues_cov = eigenvalues_cov.astype("float32")
     eigenvectors_cov = eigenvectors_cov.astype("float32")
 
     print("")
-    #print("Eigenvalues Scatter: ", eigenvalues_sc.shape)
-    #print("Eigenvectors Scatter: ", eigenvectors_sc.shape)
     print("Eigenvalues Cov: ", eigenvalues_cov.shape)
     print("Eigenvectors Cov: ", eigenvectors_cov.shape)
 
     # Sort Eigenvalues - Eigenvectors in descending order
-    #sorted_ind_sc = np.argsort(eigenvalues_sc)[::-1]
-    #eigenvalues_sc = eigenvalues_sc[sorted_ind_sc]
-    #eigenvectors_sc = eigenvectors_sc[:, sorted_ind_sc]
-
     sorted_ind_cov = np.argsort(eigenvalues_cov)[::-1]
     eigenvalues_cov = eigenvalues_cov[sorted_ind_cov]
     eigenvectors_cov = eigenvectors_cov[:, sorted_ind_cov]
-
-    #print("Sorted Index SC: ", sorted_ind_sc)
-    #print("Sorted Index Cov: ", sorted_ind_cov)
 
     # Covariance and Scatter Matrix Trace
     cov_trace = np.trace(cov_matrix)
@@ -118,19 +98,6 @@ if __name__ == "__main__":
     print("Sum Eigenvalues Cov: ", sum_eigenvalues_cov)
 
     # Eigenvectors Weight
-    #info = 0.60
-    #sum_info = 0
-    #number_eigenvectors = 0
-    #list_eigenvectors_weight = []
-
-    #for value in eigenvalues_cov:
-    #    info_vector = value / cov_trace
-    #    list_eigenvectors_weight.append(info_vector)
-
-    #    if sum_info < info:
-    #        sum_info += info_vector
-    #        number_eigenvectors += 1
-    
     number_eigenvectors = 16
     print("")
     print("Number of Eigenvectors: ", number_eigenvectors)
@@ -145,44 +112,50 @@ if __name__ == "__main__":
     print("")
     print("Dataset Proj Train: ", dataset_proj_train.shape)
     print("Dataset Proj Test: ", dataset_proj_test.shape)
+    print("")
 
-    # KNeighborsClassifier -> Euclidian Distance
-    #knc_eucl = KNeighborsClassifier(n_neighbors=50, metric=euclidean_distance)
-    #knc_eucl.fit(dataset_proj_train, dataset_labels_train)
-
-    # Prediction
-    #test_prediction_eucl = knc_eucl.predict(dataset_proj_test)
-    #print("Test Prediction Euclidian: ", test_prediction_eucl)
-
-    # Accuracy
-    #accuracy_eucl = accuracy_score(dataset_labels_test, test_prediction_eucl)
-    #print("Accuracy Euclidian: ", accuracy_eucl)
-
-    # Save Model in Binary
-    #knc_eucl_pickle = open("pca_model_eucl", "wb")
-    #pickle.dump(knc_eucl, knc_eucl_pickle)
-    #knc_eucl_pickle.close()
-
-    # KNeighborsClassifier -> Mahalanobis Distance
-    #cov_matrix_pca = np.cov(dataset_proj_train, rowvar=False)
-    #inv_cov_matrix_pca = np.linalg.inv(cov_matrix_pca)
-    #print("PCA Cov Matrix: ", cov_matrix_pca.shape)
-
-    #knc_maha = KNeighborsClassifier(n_neighbors=50, metric=mahalanobis_distance, metric_params={"inv_cov_matrix": inv_cov_matrix_pca})
-    #knc_maha.fit(dataset_proj_train, dataset_labels_train)
+    # Euclidian Distance
+    # KNeighborsClassifier
+    knc_eucl = KNeighborsClassifier(n_neighbors=50, metric=euclidean_distance)
+    knc_eucl.fit(dataset_proj_train, dataset_labels_train)
 
     # Prediction
-    #test_prediction_maha = knc_maha.predict(dataset_proj_test)
-    #print("Test Prediction Mahalanobis: ", test_prediction_maha)
+    test_prediction_eucl = knc_eucl.predict(dataset_proj_test)
+    print("Test Prediction Euclidian: ", test_prediction_eucl)
 
     # Accuracy
-    #accuracy_maha = accuracy_score(dataset_labels_test, test_prediction_maha)
-    #print("Accuracy Mahalanobis: ", accuracy_maha)
+    accuracy_eucl = accuracy_score(dataset_labels_test, test_prediction_eucl)
+    print("Accuracy Euclidian: ", accuracy_eucl)
 
     # Save Model in Binary
-    #knc_maha_pickle = open("pca_model_maha", "wb")
-    #pickle.dump(knc_maha, knc_maha_pickle)
-    #knc_maha_pickle.close()
+    knc_eucl_pickle = open("pca_model_eucl", "wb")
+    pickle.dump(knc_eucl, knc_eucl_pickle)
+    knc_eucl_pickle.close()
+
+    
+    # Mahalanobis Distance
+    # PCA Cov Matrix
+    cov_matrix_pca = np.cov(dataset_proj_train, rowvar=False)
+    inv_cov_matrix_pca = np.linalg.inv(cov_matrix_pca)
+    print("PCA Cov Matrix: ", cov_matrix_pca.shape)
+    print("")
+
+    # KNeighborsClassifier
+    knc_maha = KNeighborsClassifier(n_neighbors=50, metric=mahalanobis_distance, metric_params={"inv_cov_matrix": inv_cov_matrix_pca})
+    knc_maha.fit(dataset_proj_train, dataset_labels_train)
+
+    # Prediction
+    test_prediction_maha = knc_maha.predict(dataset_proj_test)
+    print("Test Prediction Mahalanobis: ", test_prediction_maha)
+
+    # Accuracy
+    accuracy_maha = accuracy_score(dataset_labels_test, test_prediction_maha)
+    print("Accuracy Mahalanobis: ", accuracy_maha)
+
+    # Save Model in Binary
+    knc_maha_pickle = open("pca_model_maha", "wb")
+    pickle.dump(knc_maha, knc_maha_pickle)
+    knc_maha_pickle.close()
 
     # Save Top Vectors
     np.savez("top_eigenvectors.npz", top_eigenvectors)
